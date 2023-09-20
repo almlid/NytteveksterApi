@@ -14,10 +14,15 @@ public class NytteveksterContext : DbContext
 
   protected override void OnModelCreating(ModelBuilder modelBuilder)
   {
-    modelBuilder.Entity<Species>().HasOne(s => s.Type).WithMany(t => t.Species);
     modelBuilder.Entity<Type>().HasKey(t => t.Id);
+
+    modelBuilder.Entity<Species>().HasKey(s => s.Id);
+    modelBuilder.Entity<Species>().HasOne(s => s.Type).WithMany(t => t.Species);
+
     modelBuilder.Entity<SpeciesAvailability>().HasKey(sa => sa.Id);
+    modelBuilder.Entity<SpeciesAvailability>()
+        .HasOne(sa => sa.Species)
+        .WithOne(s => s.Availability)
+        .HasForeignKey<SpeciesAvailability>(sa => sa.Id);
   }
-
 }
-

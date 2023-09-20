@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NytteveksterApi.Contexts;
@@ -12,17 +13,19 @@ builder.Services.AddApiVersioning(options =>
   });
 
 builder.Services.AddDbContext<NytteveksterContext>(options => options.UseSqlite("Data Source=nyttevekster.db"));
-builder.Services.AddCors(
-options =>
-{
-  options.AddPolicy("AllowAll",
-    builder => builder
-    .AllowAnyHeader()
-    .AllowAnyMethod()
-    .AllowAnyOrigin()
-  );
-}
-);
+
+builder.Services.AddCors(options =>
+  {
+    options.AddPolicy("AllowAll",
+      builder => builder
+      .AllowAnyHeader()
+      .AllowAnyMethod()
+      .AllowAnyOrigin()
+    );
+  });
+
+builder.Services.AddControllersWithViews()
+                .AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

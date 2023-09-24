@@ -45,7 +45,7 @@ public class MonthsController : ControllerBase
                   .GetType()
                   .GetProperty(month)
                   .GetValue(sa)),
-          SpeciesUrl = $"/api/v{apiVersion}/species/months/{month}"
+          SpeciesUrl = $"/api/v{apiVersion}/species/month/{month}"
         };
 
         monthDtoList.Add(monthDto);

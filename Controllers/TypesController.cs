@@ -53,4 +53,35 @@ public class TypesController : ControllerBase
       return StatusCode(500, e.Message);
     }
   }
+
+  [HttpGet("{id}")]
+  public async Task<ActionResult<TypeDto>> GetById(int id)
+  {
+    try
+    {
+      var type = await context.Types.Include(t => t.Species).FirstOrDefaultAsync(t => t.Id == id);
+
+      if (type != null)
+      {
+        var dto = new TypeDto
+        {
+
+          Id = type.Id,
+          Name = type.Name,
+          Description = type.Description,
+          ImagePath = type.ImagePath,
+          SpeciesCount = type.Species?.Count ?? 0,
+          SpeciesUrl = $"/api/v{apiVersion}/species/type/{type.Name}",
+        };
+        return Ok(dto);
+
+      }
+      return NotFound();
+
+    }
+    catch (Exception e)
+    {
+      return StatusCode(500, e.Message);
+    }
+  }
 }

@@ -107,4 +107,90 @@ public class SpeciesController : ControllerBase
     }
   }
 
+
+  [HttpGet("Type/{type}")]
+  public async Task<ActionResult<ListResponseDTO<SpeciesSimpleDto>>> GetByType(string? type)
+  {
+
+    try
+    {
+      if (type != null)
+      {
+        List<Species> speciesList = await context.Species
+              .Where(s => s.Type.Name.ToLower().Contains(type.ToLower()))
+              .Include(t => t.Type)
+              .Include(a => a.Availability).ToListAsync();
+
+        var speciesDtoList = speciesList.Select(s => new SpeciesSimpleDto
+        {
+          Id = s.Id,
+          CommonName = s.CommonName,
+          Url = $"/api/v{apiVersion}/species/{s.Id}"
+
+        }).ToList();
+
+        var dto = new ListResponseDTO<SpeciesSimpleDto>
+        {
+          Count = speciesList.Count,
+          Results = speciesDtoList
+
+        };
+        return Ok(dto);
+
+      }
+      return NotFound();
+    }
+    catch
+    {
+      return StatusCode(StatusCodes.Status500InternalServerError);
+    }
+  }
+
+  [HttpGet("Month/{month}")]
+  public async Task<ActionResult<ListResponseDTO<SpeciesSimpleDto>>> GetByMonth(string? month)
+  {
+    try
+    {
+      if (month != null)
+      {
+        string validMonth = CultureInfo.CurrentCulture.DateTimeFormat
+              .GetMonthName(DateTime.ParseExact(month, "MMMM", CultureInfo.CurrentCulture).Month);
+
+        var speciesList = context.Species
+              .Include(t => t.Type)
+              .Include(a => a.Availability)
+              .AsEnumerable()
+              .Where(s => (bool)s.Availability
+                .GetType()
+                .GetProperty(validMonth)
+                .GetValue(s.Availability))
+              .ToList();
+
+        var speciesDtoList = speciesList.Select(s => new SpeciesSimpleDto
+        {
+          Id = s.Id,
+          CommonName = s.CommonName,
+          Url = $"/api/v{apiVersion}/species/{s.Id}"
+        }).ToList();
+
+        var dto = new ListResponseDTO<SpeciesSimpleDto>
+        {
+          Count = speciesList.Count,
+          Results = speciesDtoList
+        };
+        return Ok(dto);
+      }
+      return NotFound();
+    }
+    catch (FormatException ex)
+    {
+      return BadRequest("Invalid month format.");
+    }
+    catch (Exception ex)
+    {
+      return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred.");
+    }
+  }
+
+
 }

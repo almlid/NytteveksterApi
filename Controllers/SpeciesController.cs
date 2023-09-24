@@ -57,4 +57,54 @@ public class SpeciesController : ControllerBase
     }
   }
 
+  [HttpGet("{id}")]
+  public async Task<ActionResult<SpeciesDto>> GetById(int id)
+  {
+    try
+    {
+      Species? species = await context.Species.Include(t => t.Type).Include(a => a.Availability).FirstOrDefaultAsync(s => s.Id == id);
+
+      if (species != null)
+      {
+        var dto = new SpeciesDto
+        {
+          Id = species.Id,
+          CommonName = species.CommonName,
+          Description = species.Description,
+          ImagePath = species.ImagePath,
+          ScientificName = species.ScientificName,
+
+          Type = new TypeSimpleDto()
+          {
+            Id = species.Type.Id,
+            Name = species.Type.Name,
+            Url = $"/api/v{apiVersion}/types/{species.Type.Id}",
+          },
+
+          Availability = new SpeciesAvailabilityDto()
+          {
+            January = species.Availability.January,
+            February = species.Availability.February,
+            March = species.Availability.March,
+            April = species.Availability.April,
+            May = species.Availability.May,
+            June = species.Availability.June,
+            July = species.Availability.July,
+            August = species.Availability.August,
+            September = species.Availability.September,
+            October = species.Availability.October,
+            November = species.Availability.November,
+            December = species.Availability.December
+          },
+        };
+        return Ok(dto);
+      }
+      return NotFound();
+    }
+    catch (Exception e)
+    {
+      return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+    }
+  }
+
 }

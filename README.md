@@ -23,7 +23,7 @@ While the current entities and their relations are relatively straightforward, t
 
 ## Contributing
 
-You're welcome to contribute to the Nyttevekster API project! Whether you're a developer or a nature enthusiast, your contributions are valued. Here's how you can help:
+Whether you're a developer or a nature enthusiast, your contributions are valued. Here's how you can help:
 
 - **Bug Reports:** If you encounter issues or unexpected behavior, please report them with details and steps to reproduce.
 
@@ -35,6 +35,6 @@ You're welcome to contribute to the Nyttevekster API project! Whether you're a d
 
 - **Feedback:** Share your thoughts and ideas.
 
-Feel free to open issues, submit pull requests, or provide feedback. Together, we can make this project even better.
+Feel free to contribute! Together, we can make this project even better.
 
 Thank you for your interest in Nyttevekster API!
